@@ -178,9 +178,47 @@ boot_coef =
      "beta0" = "(Intercept)",
      "beta1" = "tmin") %>% 
   mutate(
-    log_coef = log(beta0 * beta1)
-  )
+    log_coef = log(beta0 * beta1))
 ```
 
+Next, we plot their respective distribution.
 
+```{r distribution plotting2}
+# plotting for rsquare
+plot1 = 
+  boot_rsquare %>% 
+  ggplot(aes(x = r.squared)) + 
+  geom_density(color = "blue") + 
+  labs(
+    title = "distribution of r-squared",
+    x = "r-squared value")
+
+# plotting for log(beta0 * beta1)
+plot2 =
+boot_coef %>% 
+  ggplot(aes(x = log_coef)) + 
+  geom_density(color = "red") + 
+  labs(
+    title = "distribution of log(beta0 * beta1)",
+    x = "log(beta0 * beta1)")
+
+gridExtra::grid.arrange(plot1, plot2, ncol = 2)
+
+```
+
+Accordingly, both of them seems to follow normal distribution. 
+Furthermore, we're going to construct their respective confidence interval.
+
+```{r confidence intervals}
+# for r-square
+quantile(pull(boot_rsquare, r.squared), c(.025, .975))
+
+# for log(beta0 * beta1)
+quantile(pull(boot_coef, log_coef), c(.025, .975))
+
+```
+
+Therefore, the 95% intervals are, respectively:     
+r-squared: [0.89, 0.93]     
+log(beta0 * beta1): [1.96, 2.06]
 
